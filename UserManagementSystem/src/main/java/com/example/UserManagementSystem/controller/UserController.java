@@ -21,7 +21,7 @@ import java.util.stream.Collectors;
 @RestController
 @RequestMapping("/api/users")
 @RequiredArgsConstructor
-@Tag(name = "User Management", description = "APIs for performing CRUD operations on Users")
+@Tag(name = "User Management system", description = "APIs for performing CRUD operations on Users")
 public class UserController {
 
     private final UserService userService;
