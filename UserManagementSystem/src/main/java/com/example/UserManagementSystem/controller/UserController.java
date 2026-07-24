@@ -98,7 +98,7 @@ public class UserController {
 
         ApiResponse<Void> response = ApiResponse.<Void>builder()
                 .success(true)
-                .status(204)
+                .status(HttpStatus.NO_CONTENT.value())
                 .message("User deleted successfully.")
                 .build();
 
