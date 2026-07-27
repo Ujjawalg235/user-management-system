@@ -9,5 +9,6 @@ public interface UserService {
     UserResponseDto getUserById(Long id);
     UserResponseDto createUser(UserRequestDto request);
     UserResponseDto updateUser(Long id, UserRequestDto request);
+    UserResponseDto getUserByUsername(String username);
     void deleteUser(Long id);
 }

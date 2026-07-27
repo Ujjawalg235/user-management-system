@@ -19,5 +19,4 @@ public class UserResponseDto {
     private String phoneNumber;
     private String role;
     private boolean active;
-    private Map<String, String> links;
 }

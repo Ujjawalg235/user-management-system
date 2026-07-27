@@ -96,6 +96,15 @@ public class PostgresUserServiceImpl implements UserService {
     }
 
     @Override
+    @Transactional(readOnly = true)
+    public UserResponseDto getUserByUsername(String username) {
+        log.info("[PostgreSQL Storage] Fetching user by username: {} from PostgreSQL.", username);
+        User user = userRepository.findByUsername(username)
+                .orElseThrow(() -> new UserNotFoundException("User not found with username: " + username));
+        return userMapper.toResponse(user);
+    }
+
+    @Override
     public void deleteUser(Long id) {
         log.info("[PostgreSQL Storage] Deleting user ID: {} from PostgreSQL.", id);
         User user = userRepository.findById(id)

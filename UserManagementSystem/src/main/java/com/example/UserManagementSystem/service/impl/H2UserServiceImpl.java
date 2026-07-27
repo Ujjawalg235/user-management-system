@@ -96,6 +96,15 @@ public class H2UserServiceImpl implements UserService {
     }
 
     @Override
+    @Transactional(readOnly = true)
+    public UserResponseDto getUserByUsername(String username) {
+        log.info("[H2 Storage] Fetching user by username: {} from H2 Database.", username);
+        User user = userRepository.findByUsername(username)
+                .orElseThrow(() -> new UserNotFoundException("User not found with username: " + username));
+        return userMapper.toResponse(user);
+    }
+
+    @Override
     public void deleteUser(Long id) {
         log.info("[H2 Storage] Attempting to delete user with ID: {} from H2 Database.", id);
         User user = userRepository.findById(id)

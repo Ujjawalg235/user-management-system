@@ -17,5 +17,6 @@ public class ApiResponse<T> {
     private String errorCode;
     private T data;
     private Object errors;
-    private LocalDateTime timestamp;
+    @Builder.Default
+    private LocalDateTime timestamp = LocalDateTime.now();
 }

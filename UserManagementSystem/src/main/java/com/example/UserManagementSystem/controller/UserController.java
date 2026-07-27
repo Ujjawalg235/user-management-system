@@ -10,13 +10,10 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
-import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/api/users")
@@ -27,11 +24,9 @@ public class UserController {
     private final UserService userService;
 
     @GetMapping
-    @Operation(summary = "Get all users", description = "Retrieves all users and appends HATEOAS links to each resource.")
+    @Operation(summary = "Get all users", description = "Retrieves all users.")
     public ResponseEntity<ApiResponse<List<UserResponseDto>>> getAllUsers() {
-        List<UserResponseDto> users = userService.getAllUsers().stream()
-                .map(this::addLink)
-                .collect(Collectors.toList());
+        List<UserResponseDto> users = userService.getAllUsers();
 
         ApiResponse<List<UserResponseDto>> response = ApiResponse.<List<UserResponseDto>>builder()
                 .success(true)
@@ -43,11 +38,25 @@ public class UserController {
         return ResponseEntity.ok(response);
     }
 
+    @GetMapping("/me")
+    @Operation(summary = "Get current authenticated user", description = "Verifies login credentials and retrieves current user details.")
+    public ResponseEntity<ApiResponse<UserResponseDto>> getCurrentUser(Authentication authentication) {
+        UserResponseDto user = userService.getUserByUsername(authentication.getName());
+
+        ApiResponse<UserResponseDto> response = ApiResponse.<UserResponseDto>builder()
+                .success(true)
+                .status(HttpStatus.OK.value())
+                .message("User authenticated successfully.")
+                .data(user)
+                .build();
+
+        return ResponseEntity.ok(response);
+    }
+
     @GetMapping("/{id}")
-    @Operation(summary = "Get user by ID", description = "Retrieves a single user by ID with HATEOAS transition links.")
+    @Operation(summary = "Get user by ID", description = "Retrieves a single user by ID.")
     public ResponseEntity<ApiResponse<UserResponseDto>> getUserById(@PathVariable Long id) {
         UserResponseDto user = userService.getUserById(id);
-        addLink(user);
 
         ApiResponse<UserResponseDto> response = ApiResponse.<UserResponseDto>builder()
                 .success(true)
@@ -63,7 +72,6 @@ public class UserController {
     @Operation(summary = "Create user", description = "Creates a new user in the system after validating inputs.")
     public ResponseEntity<ApiResponse<UserResponseDto>> createUser(@Valid @RequestBody UserRequestDto request) {
         UserResponseDto user = userService.createUser(request);
-        addLink(user);
 
         ApiResponse<UserResponseDto> response = ApiResponse.<UserResponseDto>builder()
                 .success(true)
@@ -79,7 +87,6 @@ public class UserController {
     @Operation(summary = "Update user", description = "Updates details of an existing user after validating inputs.")
     public ResponseEntity<ApiResponse<UserResponseDto>> updateUser(@PathVariable Long id, @Valid @RequestBody UserRequestDto request) {
         UserResponseDto user = userService.updateUser(id, request);
-        addLink(user);
 
         ApiResponse<UserResponseDto> response = ApiResponse.<UserResponseDto>builder()
                 .success(true)
@@ -103,19 +110,5 @@ public class UserController {
                 .build();
 
         return ResponseEntity.status(HttpStatus.NO_CONTENT).body(response);
-    }
-
-    private UserResponseDto addLink(UserResponseDto user) {
-        Map<String, String> links = new HashMap<>();
-        String baseUri = ServletUriComponentsBuilder.fromCurrentContextPath()
-                .path("/api/users/{id}")
-                .buildAndExpand(user.getId())
-                .toUriString();
-
-        links.put("self", baseUri);
-        links.put("update", baseUri);
-        links.put("delete", baseUri);
-        user.setLinks(links);
-        return user;
     }
 }
