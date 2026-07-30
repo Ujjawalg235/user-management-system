@@ -10,6 +10,7 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
@@ -24,6 +25,7 @@ public class UserController {
     private final UserService userService;
 
     @GetMapping
+    @PreAuthorize("hasAnyRole('USER', 'ADMIN')")
     @Operation(summary = "Get all users", description = "Retrieves all users.")
     public ResponseEntity<ApiResponse<List<UserResponseDto>>> getAllUsers() {
         List<UserResponseDto> users = userService.getAllUsers();
@@ -39,6 +41,7 @@ public class UserController {
     }
 
     @GetMapping("/me")
+    @PreAuthorize("hasAnyRole('USER', 'ADMIN')")
     @Operation(summary = "Get current authenticated user", description = "Verifies login credentials and retrieves current user details.")
     public ResponseEntity<ApiResponse<UserResponseDto>> getCurrentUser(Authentication authentication) {
         UserResponseDto user = userService.getUserByUsername(authentication.getName());
@@ -54,6 +57,7 @@ public class UserController {
     }
 
     @GetMapping("/{id}")
+    @PreAuthorize("hasAnyRole('USER', 'ADMIN')")
     @Operation(summary = "Get user by ID", description = "Retrieves a single user by ID.")
     public ResponseEntity<ApiResponse<UserResponseDto>> getUserById(@PathVariable Long id) {
         UserResponseDto user = userService.getUserById(id);
@@ -69,6 +73,7 @@ public class UserController {
     }
 
     @PostMapping
+    @PreAuthorize("hasRole('ADMIN')")
     @Operation(summary = "Create user", description = "Creates a new user in the system after validating inputs.")
     public ResponseEntity<ApiResponse<UserResponseDto>> createUser(@Valid @RequestBody UserRequestDto request) {
         UserResponseDto user = userService.createUser(request);
@@ -84,6 +89,7 @@ public class UserController {
     }
 
     @PutMapping("/{id}")
+    @PreAuthorize("hasRole('ADMIN')")
     @Operation(summary = "Update user", description = "Updates details of an existing user after validating inputs.")
     public ResponseEntity<ApiResponse<UserResponseDto>> updateUser(@PathVariable Long id, @Valid @RequestBody UserRequestDto request) {
         UserResponseDto user = userService.updateUser(id, request);
@@ -99,6 +105,7 @@ public class UserController {
     }
 
     @DeleteMapping("/{id}")
+    @PreAuthorize("hasRole('ADMIN')")
     @Operation(summary = "Delete user", description = "Deletes a user from the system by ID.")
     public ResponseEntity<ApiResponse<Void>> deleteUser(@PathVariable Long id) {
         userService.deleteUser(id);
