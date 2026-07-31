@@ -106,7 +106,7 @@ public class PostgresUserServiceImpl implements UserService {
     }
 
     @Override
-    public void deleteUser(Long id) {
+    public void deleteUser(Long id){
         log.info("[PostgreSQL Storage] Deleting user ID: {} from PostgreSQL.", id);
         User user = userRepository.findById(id)
                 .orElseThrow(() -> new UserNotFoundException("User not found with id: " + id));
