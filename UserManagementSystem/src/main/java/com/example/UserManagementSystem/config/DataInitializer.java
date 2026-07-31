@@ -31,6 +31,21 @@ public class DataInitializer implements CommandLineRunner {
                     .build();
             userRepository.save(admin);
             log.info("Default admin user initialized successfully.");
+
+            log.info("Initializing mock users for pagination testing...");
+            for (int i = 1; i <= 30; i++) {
+                User mockUser = User.builder()
+                        .username("user" + i)
+                        .firstName("First" + i)
+                        .lastName("Last" + i)
+                        .email("user" + i + "@example.com")
+                        .password(passwordEncoder.encode("password" + i))
+                        .role("ROLE_USER")
+                        .active(true)
+                        .build();
+                userRepository.save(mockUser);
+            }
+            log.info("Successfully seeded 30 mock users.");
         }
     }
 }

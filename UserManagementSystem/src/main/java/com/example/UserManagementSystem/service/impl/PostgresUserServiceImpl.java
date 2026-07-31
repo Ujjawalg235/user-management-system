@@ -12,6 +12,8 @@ import jakarta.annotation.PostConstruct;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.annotation.Profile;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -38,11 +40,10 @@ public class PostgresUserServiceImpl implements UserService {
 
     @Override
     @Transactional(readOnly = true)
-    public List<UserResponseDto> getAllUsers() {
-        log.info("[PostgreSQL Storage] Querying database to fetch all users.");
-        return userRepository.findAll().stream()
-                .map(userMapper::toResponse)
-                .collect(Collectors.toList());
+    public Page<UserResponseDto> getAllUsers(Pageable pageable) {
+        log.info("[PostgreSQL Storage] Querying database to fetch paginated users.");
+        return userRepository.findAll(pageable)
+                .map(userMapper::toResponse);
     }
 
     @Override

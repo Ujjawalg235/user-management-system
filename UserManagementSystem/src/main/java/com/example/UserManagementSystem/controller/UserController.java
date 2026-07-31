@@ -6,8 +6,13 @@ import com.example.UserManagementSystem.response.ApiResponse;
 import com.example.UserManagementSystem.service.UserService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -26,14 +31,23 @@ public class UserController {
 
     @GetMapping
     @PreAuthorize("hasAnyRole('USER', 'ADMIN')")
-    @Operation(summary = "Get all users", description = "Retrieves all users.")
-    public ResponseEntity<ApiResponse<List<UserResponseDto>>> getAllUsers() {
-        List<UserResponseDto> users = userService.getAllUsers();
+    @Operation(summary = "get all users")
+    public ResponseEntity<ApiResponse<Page<UserResponseDto>>> getAllUsers(
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "5") int size,
+            @RequestParam(defaultValue = "id") String sortBy,
+            @RequestParam(defaultValue = "asc") String direction,
+            HttpServletRequest request
+    ) {
+        Sort sort = direction.equalsIgnoreCase("desc") ? Sort.by(sortBy).descending()
+                : Sort.by(sortBy).ascending();
+        PageRequest pageable = PageRequest.of(page, size, sort);
+        Page<UserResponseDto> users = userService.getAllUsers(pageable);
 
-        ApiResponse<List<UserResponseDto>> response = ApiResponse.<List<UserResponseDto>>builder()
+        ApiResponse<Page<UserResponseDto>> response = ApiResponse.<Page<UserResponseDto>>builder()
                 .success(true)
                 .status(HttpStatus.OK.value())
-                .message("Users retrieved successfully.")
+                .message("Users fetched successfully.")
                 .data(users)
                 .build();
 
