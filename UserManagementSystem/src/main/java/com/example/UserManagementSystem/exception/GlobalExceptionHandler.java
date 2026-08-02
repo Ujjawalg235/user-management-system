@@ -96,6 +96,7 @@ public class GlobalExceptionHandler {
                 .success(false)
                 .status(HttpStatus.INTERNAL_SERVER_ERROR.value())
                 .errorCode(HttpStatus.INTERNAL_SERVER_ERROR.name())
+                //.message(ex.getMessage() != null ? ex.getMessage() : "An unexpected error occurred.")
                 .message(ex.getMessage() != null ? ex.getMessage() : "An unexpected error occurred.")
                 .path(request.getRequestURI())
                 .timestamp(LocalDateTime.now())

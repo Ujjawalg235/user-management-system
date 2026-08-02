@@ -40,9 +40,9 @@ public class PostgresUserServiceImpl implements UserService {
 
     @Override
     @Transactional(readOnly = true)
-    public Page<UserResponseDto> getAllUsers(Pageable pageable) {
-        log.info("[PostgreSQL Storage] Querying database to fetch paginated users.");
-        return userRepository.findAll(pageable)
+    public Page<UserResponseDto> getAllUsers(Pageable pageable, String firstName, String lastName) {
+        log.info("[PostgreSQL Storage] Querying database to fetch paginated users with optional search - First Name: {}, Last Name: {}.", firstName, lastName);
+        return userRepository.searchNames(firstName, lastName, pageable)
                 .map(userMapper::toResponse);
     }
 

@@ -33,7 +33,10 @@ public class UserRequestDto {
     private String email;
 
     @NotBlank(message = "Password is mandatory")
-    @Size(min = 6, message = "Password must be at least 6 characters long")
+    @Pattern(
+        regexp = "^(?=.*[0-9])(?=.*[a-z])(?=.*[A-Z])(?=.*[@#$%^&+=!]).{8,}$",
+        message = "Password must be at least 8 characters long, contain at least one digit, one uppercase letter, one lowercase letter, and one special character"
+    )
     private String password;
 
     @Pattern(regexp = "^$|^\\+?[0-9\\s\\-\\.]{7,20}$", message = "Phone number format is invalid")

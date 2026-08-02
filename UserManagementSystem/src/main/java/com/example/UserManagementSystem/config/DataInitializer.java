@@ -25,7 +25,7 @@ public class DataInitializer implements CommandLineRunner {
                     .firstName("Admin")
                     .lastName("System")
                     .email("admin@example.com")
-                    .password(passwordEncoder.encode("adminpassword"))
+                    .password(passwordEncoder.encode("AdminPass123!"))
                     .role("ROLE_ADMIN")
                     .active(true)
                     .build();
@@ -39,7 +39,7 @@ public class DataInitializer implements CommandLineRunner {
                         .firstName("First" + i)
                         .lastName("Last" + i)
                         .email("user" + i + "@example.com")
-                        .password(passwordEncoder.encode("password" + i))
+                        .password(passwordEncoder.encode("UserPass123!"))
                         .role("ROLE_USER")
                         .active(true)
                         .build();

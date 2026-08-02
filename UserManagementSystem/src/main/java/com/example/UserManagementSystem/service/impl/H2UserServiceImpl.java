@@ -40,9 +40,9 @@ public class H2UserServiceImpl implements UserService {
 
     @Override
     @Transactional(readOnly = true)
-    public Page<UserResponseDto> getAllUsers(Pageable pageable) {
-        log.info("[H2 Storage] Fetching paginated users from H2 Database.");
-        return userRepository.findAll(pageable)
+    public Page<UserResponseDto> getAllUsers(Pageable pageable, String firstName, String lastName) {
+        log.info("[H2 Storage] Fetching paginated users with optional search - First Name: {}, Last Name: {}.", firstName, lastName);
+        return userRepository.searchNames(firstName, lastName, pageable)
                 .map(userMapper::toResponse);
     }
 

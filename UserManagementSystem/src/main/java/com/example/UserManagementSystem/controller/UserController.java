@@ -37,12 +37,14 @@ public class UserController {
             @RequestParam(defaultValue = "5") int size,
             @RequestParam(defaultValue = "id") String sortBy,
             @RequestParam(defaultValue = "asc") String direction,
+            @RequestParam(required = false) String firstName,
+            @RequestParam(required = false) String lastName,
             HttpServletRequest request
     ) {
         Sort sort = direction.equalsIgnoreCase("desc") ? Sort.by(sortBy).descending()
                 : Sort.by(sortBy).ascending();
         PageRequest pageable = PageRequest.of(page, size, sort);
-        Page<UserResponseDto> users = userService.getAllUsers(pageable);
+        Page<UserResponseDto> users = userService.getAllUsers(pageable, firstName, lastName);
 
         ApiResponse<Page<UserResponseDto>> response = ApiResponse.<Page<UserResponseDto>>builder()
                 .success(true)
