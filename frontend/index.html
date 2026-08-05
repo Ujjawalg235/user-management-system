@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>User Management System</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+    <div id="login-container">
+        <h2>User Management Login</h2>
+        <form id="login-form">
+            <div>
+                <label for="username">Username:</label>
+                <input type="text" id="username" name="username" required>
+            </div>
+            <br>
+            <div>
+                <label for="password">Password:</label>
+                <input type="password" id="password" name="password" required>
+            </div>
+            <br>
+            <button type="submit">Login</button>
+        </form>
+    </div>
+
+    <hr>
+
+    <div id="dashboard-container">
+        <h2>Dashboard - User Directory</h2>
+        
+        <fieldset>
+            <legend>Filters and Search</legend>
+            <label for="search-first-name">First Name:</label>
+            <input type="text" id="search-first-name" placeholder="Search first name...">
+            
+            <label for="search-last-name">Last Name:</label>
+            <input type="text" id="search-last-name" placeholder="Search last name...">
+            
+            <button type="button" id="btn-search">Search</button>
+            <button type="button" id="btn-reset">Reset</button>
+        </fieldset>
+
+        <br>
+
+        <table border="1" cellpadding="8" cellspacing="0">
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Username</th>
+                    <th>First Name</th>
+                    <th>Last Name</th>
+                    <th>Email</th>
+                    <th>Role</th>
+                    <th>Active</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody id="user-table-body">
+                <tr>
+                    <td>1</td>
+                    <td>admin</td>
+                    <td>Admin</td>
+                    <td>System</td>
+                    <td>admin@example.com</td>
+                    <td>ROLE_ADMIN</td>
+                    <td>Yes</td>
+                    <td>
+                        <button>Edit</button>
+                        <button>Delete</button>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+
+        <br>
+
+        <div id="pagination-controls">
+            <button id="btn-prev">Previous</button>
+            <span id="page-info">Page 1 of 1 (Total Users: 1)</span>
+            <button id="btn-next">Next</button>
+    </div>
+
+    <script src="app.js"></script>
+</body>
+</html>
