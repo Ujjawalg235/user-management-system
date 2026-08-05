@@ -17,7 +17,7 @@ public interface UserRepository extends JpaRepository<User, Long> {
     boolean existsByUsernameAndIdNot(String username, Long id);
     boolean existsByEmailAndIdNot(String email, Long id);
 
-    @Query("SELECT u FROM User u WHERE " +
+    @Query("SELECT u FROM User u WHERE u.active = true AND " +
            "(:firstName IS NULL OR :firstName = '' OR LOWER(u.firstName) LIKE LOWER(CONCAT('%', :firstName, '%'))) AND " +
            "(:lastName IS NULL OR :lastName = '' OR LOWER(u.lastName) LIKE LOWER(CONCAT('%', :lastName, '%')))")
     Page<User> searchNames(

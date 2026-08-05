@@ -13,6 +13,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.annotation.Profile;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -52,6 +53,9 @@ public class H2UserServiceImpl implements UserService {
         log.info("[H2 Storage] Fetching user by ID: {} from H2 Database.", id);
         User user = userRepository.findById(id)
                 .orElseThrow(() -> new UserNotFoundException("User not found with id: " + id));
+        if (!user.isActive()) {
+            throw new UserNotFoundException("User not found with id: " + id);
+        }
         return userMapper.toResponse(user);
     }
 
@@ -80,6 +84,9 @@ public class H2UserServiceImpl implements UserService {
         
         User user = userRepository.findById(id)
                 .orElseThrow(() -> new UserNotFoundException("User not found with id: " + id));
+        if (!user.isActive()) {
+            throw new UserNotFoundException("User not found with id: " + id);
+        }
 
         if (userRepository.existsByUsernameAndIdNot(request.getUsername(), id)) {
             throw new UserAlreadyExistsException("Username already exists.");
@@ -102,15 +109,22 @@ public class H2UserServiceImpl implements UserService {
         log.info("[H2 Storage] Fetching user by username: {} from H2 Database.", username);
         User user = userRepository.findByUsername(username)
                 .orElseThrow(() -> new UserNotFoundException("User not found with username: " + username));
+        if (!user.isActive()) {
+            throw new UserNotFoundException("User not found with username: " + username);
+        }
         return userMapper.toResponse(user);
     }
 
     @Override
     public void deleteUser(Long id) {
-        log.info("[H2 Storage] Attempting to delete user with ID: {} from H2 Database.", id);
+        log.info("[H2 Storage] Attempting to soft-delete user with ID: {} in H2 Database.", id);
         User user = userRepository.findById(id)
                 .orElseThrow(() -> new UserNotFoundException("User not found with id: " + id));
-        userRepository.delete(user);
-        log.info("[H2 Storage] User with ID: {} deleted successfully from H2 Database.", id);
+        if (!user.isActive()) {
+            throw new UserNotFoundException("User not found with id: " + id);
+        }
+        user.setActive(false);
+        userRepository.save(user);
+        log.info("[H2 Storage] User with ID: {} soft-deleted successfully in H2 Database.", id);
     }
 }

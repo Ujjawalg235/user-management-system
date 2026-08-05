@@ -13,6 +13,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.annotation.Profile;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -52,6 +53,9 @@ public class PostgresUserServiceImpl implements UserService {
         log.info("[PostgreSQL Storage] Querying database for user ID: {}.", id);
         User user = userRepository.findById(id)
                 .orElseThrow(() -> new UserNotFoundException("User not found with id: " + id));
+        if (!user.isActive()) {
+            throw new UserNotFoundException("User not found with id: " + id);
+        }
         return userMapper.toResponse(user);
     }
 
@@ -80,6 +84,9 @@ public class PostgresUserServiceImpl implements UserService {
         
         User user = userRepository.findById(id)
                 .orElseThrow(() -> new UserNotFoundException("User not found with id: " + id));
+        if (!user.isActive()) {
+            throw new UserNotFoundException("User not found with id: " + id);
+        }
 
         if (userRepository.existsByUsernameAndIdNot(request.getUsername(), id)) {
             throw new UserAlreadyExistsException("Username already exists.");
@@ -102,15 +109,22 @@ public class PostgresUserServiceImpl implements UserService {
         log.info("[PostgreSQL Storage] Fetching user by username: {} from PostgreSQL.", username);
         User user = userRepository.findByUsername(username)
                 .orElseThrow(() -> new UserNotFoundException("User not found with username: " + username));
+        if (!user.isActive()) {
+            throw new UserNotFoundException("User not found with username: " + username);
+        }
         return userMapper.toResponse(user);
     }
 
     @Override
     public void deleteUser(Long id){
-        log.info("[PostgreSQL Storage] Deleting user ID: {} from PostgreSQL.", id);
+        log.info("[PostgreSQL Storage] Attempting to soft-delete user ID: {} in PostgreSQL.", id);
         User user = userRepository.findById(id)
                 .orElseThrow(() -> new UserNotFoundException("User not found with id: " + id));
-        userRepository.delete(user);
-        log.info("[PostgreSQL Storage] User ID: {} deleted successfully.", id);
+        if (!user.isActive()) {
+            throw new UserNotFoundException("User not found with id: " + id);
+        }
+        user.setActive(false);
+        userRepository.save(user);
+        log.info("[PostgreSQL Storage] User ID: {} soft-deleted successfully.", id);
     }
 }

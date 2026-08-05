@@ -14,6 +14,7 @@ const btnSearch = document.getElementById('btn-search');
 const btnReset = document.getElementById('btn-reset');
 const searchFirstName = document.getElementById('search-first-name');
 const searchLastName = document.getElementById('search-last-name');
+const btnLogout = document.getElementById('btn-logout');
 
 window.addEventListener('DOMContentLoaded', () => {
     const savedAuth = sessionStorage.getItem('auth');
@@ -175,6 +176,11 @@ btnPrev.addEventListener('click', () => {
 btnNext.addEventListener('click', () => {
     currentPage++;
     fetchUsers();
+});
+
+btnLogout.addEventListener('click', () => {
+    sessionStorage.removeItem('auth');
+    showLogin();
 });
 
 function handleEdit(userId) {

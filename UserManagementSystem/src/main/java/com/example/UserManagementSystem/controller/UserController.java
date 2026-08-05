@@ -38,8 +38,7 @@ public class UserController {
             @RequestParam(defaultValue = "id") String sortBy,
             @RequestParam(defaultValue = "asc") String direction,
             @RequestParam(required = false) String firstName,
-            @RequestParam(required = false) String lastName,
-            HttpServletRequest request
+            @RequestParam(required = false) String lastName
     ) {
         Sort sort = direction.equalsIgnoreCase("desc") ? Sort.by(sortBy).descending()
                 : Sort.by(sortBy).ascending();
